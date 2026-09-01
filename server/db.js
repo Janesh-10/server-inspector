@@ -140,6 +140,76 @@ function updateResponse(id, responseData) {
 }
 
 /**
+ * Queries captures with optional filters for method, status, and search query q.
+ * @param {Object} [filters={}]
+ * @param {string} [filters.method] HTTP method (e.g. GET, POST)
+ * @param {number|string} [filters.status] HTTP status code (e.g. 404, 200)
+ * @param {string} [filters.q] Search term matching url, path, host, or body
+ * @param {number|string} [filters.limit=100] Max number of records to return
+ * @param {number|string} [filters.offset=0] Number of records to skip
+ * @returns {Array<Object>} List of capture records
+ */
+function getCaptures(filters = {}) {
+  const db = getDb();
+  const conditions = [];
+  const params = [];
+
+  if (filters.method) {
+    conditions.push("UPPER(method) = UPPER(?)");
+    params.push(filters.method.trim());
+  }
+
+  if (
+    filters.status !== undefined &&
+    filters.status !== null &&
+    filters.status !== ""
+  ) {
+    conditions.push("status_code = ?");
+    params.push(parseInt(filters.status, 10));
+  }
+
+  if (filters.q && filters.q.trim() !== "") {
+    const term = `%${filters.q.trim()}%`;
+    conditions.push(
+      "(url LIKE ? OR path LIKE ? OR host LIKE ? OR request_body LIKE ? OR response_body LIKE ?)"
+    );
+    params.push(term, term, term, term, term);
+  }
+
+  let sql = "SELECT * FROM captures";
+  if (conditions.length > 0) {
+    sql += " WHERE " + conditions.join(" AND ");
+  }
+  sql += " ORDER BY started_at DESC LIMIT ? OFFSET ?";
+
+  const limit = parseInt(filters.limit, 10) || 100;
+  const offset = parseInt(filters.offset, 10) || 0;
+  params.push(limit, offset);
+
+  return db.prepare(sql).all(...params);
+}
+
+/**
+ * Retrieves a single capture record by UUID.
+ * @param {string} id
+ * @returns {Object|undefined}
+ */
+function getCaptureById(id) {
+  const db = getDb();
+  return db.prepare("SELECT * FROM captures WHERE id = ?").get(id);
+}
+
+/**
+ * Clears all records from the captures table.
+ * @returns {number} Number of deleted rows
+ */
+function clearCaptures() {
+  const db = getDb();
+  const result = db.prepare("DELETE FROM captures").run();
+  return result.changes;
+}
+
+/**
  * Closes the database connection.
  */
 function closeDb() {
@@ -154,5 +224,8 @@ module.exports = {
   getDb,
   insertRequest,
   updateResponse,
+  getCaptures,
+  getCaptureById,
+  clearCaptures,
   closeDb,
 };
