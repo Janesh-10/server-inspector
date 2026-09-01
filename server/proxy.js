@@ -1,4 +1,5 @@
 const mockttp = require("mockttp");
+const { initDb, insertRequest, updateResponse } = require("./db");
 
 /**
  * List of proxy-specific headers that must be stripped before forwarding upstream
@@ -25,16 +26,43 @@ function stripProxyHeaders(headers) {
 }
 
 /**
+ * Extracts the host string from request metadata.
+ * @param {import('mockttp').CompletedRequest} req
+ * @returns {string|null}
+ */
+function extractHost(req) {
+  if (req.headers && req.headers.host) {
+    return req.headers.host;
+  }
+  if (req.url) {
+    try {
+      return new URL(req.url).host;
+    } catch {
+      // Non-absolute URL
+    }
+  }
+  if (req.destination && req.destination.hostname) {
+    return req.destination.port
+      ? `${req.destination.hostname}:${req.destination.port}`
+      : req.destination.hostname;
+  }
+  return null;
+}
+
+/**
  * Creates and starts a Mockttp HTTP proxy server instance.
  *
- * Captures HTTP requests, logs the complete request object, strips proxy-specific headers,
- * and forwards traffic to the real destination.
+ * Captures HTTP requests, saves request/response details into SQLite `captures` table,
+ * strips proxy-specific headers, and forwards traffic to the real destination.
  *
  * @param {number} [port=8888] Local port to listen on
- * @param {Object} [options={}] Additional mockttp options
+ * @param {Object} [options={}] Additional options (e.g., dbPath)
  * @returns {Promise<import('mockttp').Mockttp>} Started mockttp server instance
  */
 async function startProxyServer(port = 8888, options = {}) {
+  // Initialize SQLite database
+  initDb(options.dbPath);
+
   const server = mockttp.getLocal({
     debug: options.debug || false,
     cors: false,
@@ -42,14 +70,49 @@ async function startProxyServer(port = 8888, options = {}) {
     ...options,
   });
 
-  // Capture and log key request details
+  // 1. Intercept incoming request and persist to SQLite
   await server.on("request", async (req) => {
-    console.log(`--> ${req.method} ${req.url}`);
+    let body = null;
+    try {
+      body = await req.body.getText();
+    } catch {
+      body = req.body?.buffer ? req.body.buffer.toString("utf8") : null;
+    }
+
+    const host = extractHost(req);
+    const started_at = req.timingEvents?.startTime
+      ? new Date(req.timingEvents.startTime).toISOString()
+      : new Date().toISOString();
+
+    insertRequest({
+      id: req.id,
+      method: req.method,
+      url: req.url,
+      host: host,
+      path: req.path,
+      request_headers: req.headers,
+      request_body: body,
+      started_at: started_at,
+    });
   });
 
-  // Capture and log key response details
+  // 2. Intercept upstream response and update record in SQLite
   await server.on("response", async (res) => {
-    console.log(`<-- ${res.statusCode} ${res.url}`);
+    let body = null;
+    try {
+      body = await res.body.getText();
+    } catch {
+      body = res.body?.buffer ? res.body.buffer.toString("utf8") : null;
+    }
+
+    const completed_at = new Date().toISOString();
+
+    updateResponse(res.id, {
+      status_code: res.statusCode,
+      response_headers: res.headers,
+      response_body: body,
+      completed_at: completed_at,
+    });
   });
 
   // Pass through to destination while stripping proxy headers

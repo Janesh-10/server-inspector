@@ -1,4 +1,5 @@
 const { startProxyServer } = require('./proxy');
+const { closeDb } = require('./db');
 
 const PORT = parseInt(process.env.PORT || process.env.PROXY_PORT || '8888', 10);
 
@@ -7,8 +8,13 @@ async function main() {
         const server = await startProxyServer(PORT);
 
         const shutdown = async () => {
-            console.log('\nStopping proxy server...');
-            await server.stop();
+            console.log('\nStopping proxy server and closing database...');
+            try {
+                await server.stop();
+            } catch (err) {
+                console.error('Error stopping proxy:', err);
+            }
+            closeDb();
             process.exit(0);
         };
 
