@@ -1,5 +1,6 @@
 const { WebSocketServer, WebSocket } = require('ws');
 
+const DEFAULT_HOST = process.env.HOST || '127.0.0.1';
 const DEFAULT_WS_PORT = parseInt(process.env.WS_PORT || '8889', 10);
 
 let wssInstance = null;
@@ -9,6 +10,7 @@ let wssInstance = null;
  *
  * @param {Object|number} [options={}] Configuration options or port number
  * @param {number} [options.port=8889] Port to listen on (if standalone)
+ * @param {string} [options.host] Host IP to bind to
  * @param {import('http').Server} [options.server] Optional HTTP server to attach to
  * @returns {WebSocketServer} The initialized WebSocketServer instance
  */
@@ -19,7 +21,8 @@ function initWebSocketServer(options = {}) {
 
   const config = typeof options === 'number' ? { port: options } : options;
   const port = config.port || (config.server ? undefined : DEFAULT_WS_PORT);
-  const wssOptions = config.server ? { server: config.server } : { port };
+  const host = config.host || DEFAULT_HOST;
+  const wssOptions = config.server ? { server: config.server } : { port, host };
 
   const wss = new WebSocketServer(wssOptions);
 
@@ -60,7 +63,7 @@ function initWebSocketServer(options = {}) {
   });
 
   if (port) {
-    console.log(`WebSocket server listening on ws://127.0.0.1:${port}`);
+    console.log(`WebSocket server listening on ws://${host}:${port}`);
   }
 
   wssInstance = wss;
@@ -108,4 +111,6 @@ module.exports = {
   initWebSocketServer,
   broadcastCapture,
   closeWebSocketServer,
+  DEFAULT_HOST,
+  DEFAULT_WS_PORT,
 };

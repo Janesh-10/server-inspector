@@ -6,7 +6,7 @@ import DetailPanel from './components/DetailPanel';
 import { getCaptures, clearAllCaptures } from './services/api';
 import './App.css';
 
-const WS_URL = 'ws://127.0.0.1:8889';
+const WS_URL = import.meta.env.VITE_WS_URL || 'ws://127.0.0.1:8889';
 
 export default function App() {
   const [captures, setCaptures] = useState([]);

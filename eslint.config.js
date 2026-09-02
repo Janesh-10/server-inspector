@@ -3,9 +3,13 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['node_modules/', 'ui/dist/', 'coverage/'],
+    // Explicit global ignores for custom build directories
+    ignores: ['ui/dist/', 'dist/', 'coverage/'],
   },
-
+  {
+    // Apply recommended JS rules globally or scope it explicitly
+    ...js.configs.recommended,
+  },
   {
     files: ['server/**/*.js'],
     languageOptions: {
@@ -16,7 +20,16 @@ export default [
       },
     },
     rules: {
-      ...js.configs.recommended.rules,
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
+      'no-console': 'off',
+      'no-undef': 'error',
     },
   },
 ];

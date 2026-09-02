@@ -37,10 +37,16 @@ export default function TrafficTable({ captures, selectedCapture, onSelectCaptur
             <span>Send a test proxy request</span>
           </div>
           <pre className="guide-code">
-            <code>curl -x http://127.0.0.1:8888 http://httpbin.org/get</code>
+            <code>
+              curl -x {import.meta.env.VITE_PROXY_URL || 'http://127.0.0.1:8888'}{' '}
+              http://httpbin.org/get
+            </code>
           </pre>
           <div className="guide-hint">
-            Or configure your application: <code>export HTTP_PROXY=http://127.0.0.1:8888</code>
+            Or configure your application:{' '}
+            <code>
+              export HTTP_PROXY={import.meta.env.VITE_PROXY_URL || 'http://127.0.0.1:8888'}
+            </code>
           </div>
         </div>
       </div>

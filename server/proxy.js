@@ -2,6 +2,9 @@ const mockttp = require('mockttp');
 const { initDb, insertRequest, updateResponse } = require('./db');
 const { initWebSocketServer, broadcastCapture } = require('./ws');
 
+const DEFAULT_HOST = process.env.HOST || '127.0.0.1';
+const DEFAULT_PROXY_PORT = parseInt(process.env.PROXY_PORT || process.env.PORT || '8888', 10);
+
 /**
  * List of proxy-specific headers that must be stripped before forwarding upstream
  * to prevent backend servers from misinterpreting proxy control instructions.
@@ -71,16 +74,21 @@ async function extractBodyText(entity) {
  * strips proxy-specific headers, and forwards traffic to the real destination.
  *
  * @param {number} [port=8888] Local port to listen on
- * @param {Object} [options={}] Additional options (e.g., dbPath, wsPort)
+ * @param {Object} [options={}] Additional options (e.g., host, dbPath, wsPort)
  * @returns {Promise<import('mockttp').Mockttp>} Started mockttp server instance
  */
-async function startProxyServer(port = 8888, options = {}) {
+async function startProxyServer(port = DEFAULT_PROXY_PORT, options = {}) {
+  const host = options.host || DEFAULT_HOST;
+
   // Initialize SQLite database
   initDb(options.dbPath);
 
   // Initialize WebSocket broadcast channel unless explicitly disabled
   if (options.ws !== false) {
-    initWebSocketServer(options.wsPort ? { port: options.wsPort } : {});
+    initWebSocketServer({
+      port: options.wsPort,
+      host: host,
+    });
   }
 
   // In-memory tracker for in-flight requests to combine request & response for broadcasting
@@ -96,7 +104,7 @@ async function startProxyServer(port = 8888, options = {}) {
   // 1. Intercept incoming request and persist to SQLite
   await server.on('request', async (req) => {
     const body = await extractBodyText(req);
-    const host = extractHost(req);
+    const requestHost = extractHost(req);
     const started_at = req.timingEvents?.startTime
       ? new Date(req.timingEvents.startTime).toISOString()
       : new Date().toISOString();
@@ -105,7 +113,7 @@ async function startProxyServer(port = 8888, options = {}) {
       id: req.id,
       method: req.method,
       url: req.url,
-      host: host,
+      host: requestHost,
       path: req.path,
       request_headers: req.headers,
       request_body: body,
@@ -168,7 +176,7 @@ async function startProxyServer(port = 8888, options = {}) {
   });
 
   await server.start(port);
-  console.log(`Proxy server listening on http://127.0.0.1:${server.port}`);
+  console.log(`Proxy server listening on http://${host}:${server.port}`);
 
   return server;
 }
@@ -177,4 +185,6 @@ module.exports = {
   startProxyServer,
   stripProxyHeaders,
   PROXY_SPECIFIC_HEADERS,
+  DEFAULT_HOST,
+  DEFAULT_PROXY_PORT,
 };

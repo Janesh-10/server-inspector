@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const { getCaptures, getCaptureById, clearCaptures } = require('./db');
 
+const DEFAULT_HOST = process.env.HOST || '127.0.0.1';
 const DEFAULT_API_PORT = parseInt(process.env.API_PORT || '3001', 10);
 
 /**
@@ -34,8 +35,13 @@ function formatCapture(row) {
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+// Middlewares - configure CORS based on env
+const corsOriginEnv = process.env.CORS_ORIGIN;
+const corsConfig = corsOriginEnv
+  ? { origin: corsOriginEnv.includes(',') ? corsOriginEnv.split(',').map((s) => s.trim()) : corsOriginEnv }
+  : {};
+
+app.use(cors(corsConfig));
 app.use(express.json());
 
 // 1. GET /api/captures -> search & filter
@@ -73,12 +79,15 @@ app.delete('/api/captures', (req, res) => {
 /**
  * Starts the Express REST API server.
  * @param {number} [port=3001]
+ * @param {Object} [options={}]
+ * @param {string} [options.host]
  * @returns {Promise<import('http').Server>}
  */
-function startApiServer(port = DEFAULT_API_PORT) {
+function startApiServer(port = DEFAULT_API_PORT, options = {}) {
+  const host = options.host || DEFAULT_HOST;
   return new Promise((resolve, reject) => {
-    const server = app.listen(port, () => {
-      console.log(`REST API server listening on http://127.0.0.1:${port}`);
+    const server = app.listen(port, host, () => {
+      console.log(`REST API server listening on http://${host}:${port}`);
       resolve(server);
     });
     server.on('error', reject);
@@ -89,5 +98,6 @@ module.exports = {
   app,
   startApiServer,
   formatCapture,
+  DEFAULT_HOST,
   DEFAULT_API_PORT,
 };

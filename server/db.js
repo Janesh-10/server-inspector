@@ -1,7 +1,9 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-const DEFAULT_DB_PATH = path.join(__dirname, 'traffic.db');
+const DEFAULT_DB_PATH = process.env.DB_PATH
+  ? path.resolve(process.cwd(), process.env.DB_PATH)
+  : path.join(__dirname, 'traffic.db');
 
 let dbInstance = null;
 

@@ -24,7 +24,7 @@ export default function Header({
         <div className="proxy-target-badge">
           <Server size={14} className="text-blue-400" />
           <span>HTTP_PROXY:</span>
-          <code>http://127.0.0.1:8888</code>
+          <code>{import.meta.env.VITE_PROXY_URL || 'http://127.0.0.1:8888'}</code>
         </div>
       </div>
 
