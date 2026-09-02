@@ -1,12 +1,12 @@
-import axios from "axios";
+import axios from 'axios';
 
-const API_BASE = "http://127.0.0.1:3001";
+const API_BASE = 'http://127.0.0.1:3001';
 
 const apiClient = axios.create({
   baseURL: API_BASE,
   timeout: 10000,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
 });
 
@@ -28,7 +28,7 @@ export async function getCaptures(params = {}) {
   if (params.limit) cleanParams.limit = params.limit;
   if (params.offset) cleanParams.offset = params.offset;
 
-  const response = await apiClient.get("/api/captures", {
+  const response = await apiClient.get('/api/captures', {
     params: cleanParams,
   });
   return response.data;
@@ -49,7 +49,7 @@ export async function getCaptureById(id) {
  * @returns {Promise<Object>}
  */
 export async function clearAllCaptures() {
-  const response = await apiClient.delete("/api/captures");
+  const response = await apiClient.delete('/api/captures');
   return response.data;
 }
 

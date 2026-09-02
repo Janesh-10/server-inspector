@@ -37,7 +37,7 @@ export default function App() {
     getCaptures({
       method: methodFilter,
       status: statusFilter,
-      q: debouncedQuery
+      q: debouncedQuery,
     })
       .then((data) => {
         if (!ignore) {
@@ -65,7 +65,7 @@ export default function App() {
       const data = await getCaptures({
         method: methodFilter,
         status: statusFilter,
-        q: debouncedQuery
+        q: debouncedQuery,
       });
       setCaptures(data);
       if (!methodFilter && !statusFilter && !debouncedQuery) {
@@ -225,10 +225,7 @@ export default function App() {
 
         {selectedCapture && (
           <aside className="detail-panel-container">
-            <DetailPanel
-              capture={selectedCapture}
-              onClose={() => setSelectedCapture(null)}
-            />
+            <DetailPanel capture={selectedCapture} onClose={() => setSelectedCapture(null)} />
           </aside>
         )}
       </main>

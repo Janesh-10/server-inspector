@@ -6,7 +6,7 @@ export default function Header({
   totalCaptures,
   onClearAll,
   onRefresh,
-  loading
+  loading,
 }) {
   return (
     <header className="app-header">
@@ -31,7 +31,10 @@ export default function Header({
       <div className="header-right">
         {/* WebSocket Connection Status */}
         <div className={`ws-status-badge ${wsStatus}`}>
-          <Radio size={14} className={`ws-status-icon ${wsStatus === 'connected' ? 'animate-pulse' : ''}`} />
+          <Radio
+            size={14}
+            className={`ws-status-icon ${wsStatus === 'connected' ? 'animate-pulse' : ''}`}
+          />
           <span className="ws-status-text">
             {wsStatus === 'connected' && 'Live Connected'}
             {wsStatus === 'connecting' && 'Connecting...'}
@@ -43,9 +46,7 @@ export default function Header({
         <div className="traffic-count-badge">
           <span className="count-label">Captures:</span>
           <span className="count-value">{capturesCount}</span>
-          {totalCaptures !== capturesCount && (
-            <span className="count-total">/{totalCaptures}</span>
-          )}
+          {totalCaptures !== capturesCount && <span className="count-total">/{totalCaptures}</span>}
         </div>
 
         {/* Refresh Action */}

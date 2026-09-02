@@ -9,7 +9,7 @@ import {
   FileText,
   Clock,
   ShieldAlert,
-  Layers
+  Layers,
 } from 'lucide-react';
 import {
   getMethodStyle,
@@ -17,7 +17,7 @@ import {
   formatDuration,
   parseCookies,
   extractAndDecodeJWTs,
-  formatJsonBody
+  formatJsonBody,
 } from '../utils/formatters';
 import JsonViewer from './JsonViewer';
 
@@ -48,12 +48,14 @@ export default function DetailPanel({ capture, onClose }) {
   };
 
   // Safe headers objects
-  const reqHeaders = typeof capture.request_headers === 'object' && capture.request_headers !== null
-    ? capture.request_headers
-    : {};
-  const resHeaders = typeof capture.response_headers === 'object' && capture.response_headers !== null
-    ? capture.response_headers
-    : {};
+  const reqHeaders =
+    typeof capture.request_headers === 'object' && capture.request_headers !== null
+      ? capture.request_headers
+      : {};
+  const resHeaders =
+    typeof capture.response_headers === 'object' && capture.response_headers !== null
+      ? capture.response_headers
+      : {};
 
   // Cookie parsing
   const reqCookies = parseCookies(reqHeaders.cookie || reqHeaders.Cookie, false);
@@ -62,7 +64,10 @@ export default function DetailPanel({ capture, onClose }) {
 
   // JWT Extraction
   const allHeadersCombined = { ...reqHeaders, ...resHeaders };
-  const jwts = extractAndDecodeJWTs(allHeadersCombined, `${capture.request_body || ''} ${capture.response_body || ''}`);
+  const jwts = extractAndDecodeJWTs(
+    allHeadersCombined,
+    `${capture.request_body || ''} ${capture.response_body || ''}`,
+  );
 
   // Body formatting
   const reqBodyFormatted = formatJsonBody(capture.request_body);
@@ -78,7 +83,7 @@ export default function DetailPanel({ capture, onClose }) {
             style={{
               backgroundColor: methodStyle.bg,
               color: methodStyle.text,
-              borderColor: methodStyle.border
+              borderColor: methodStyle.border,
             }}
           >
             {capture.method || 'GET'}
@@ -89,7 +94,7 @@ export default function DetailPanel({ capture, onClose }) {
             style={{
               backgroundColor: statusStyle.bg,
               color: statusStyle.text,
-              borderColor: statusStyle.border
+              borderColor: statusStyle.border,
             }}
           >
             {capture.status_code || 'Pending'}
@@ -97,12 +102,7 @@ export default function DetailPanel({ capture, onClose }) {
 
           <div className="url-container" title={capture.url}>
             <span className="url-text">{capture.url || capture.path}</span>
-            <button
-              type="button"
-              className="copy-url-btn"
-              onClick={handleCopyUrl}
-              title="Copy URL"
-            >
+            <button type="button" className="copy-url-btn" onClick={handleCopyUrl} title="Copy URL">
               {urlCopied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
             </button>
           </div>
@@ -157,9 +157,7 @@ export default function DetailPanel({ capture, onClose }) {
         >
           <CookieIcon size={14} />
           <span>Cookies</span>
-          {totalCookiesCount > 0 && (
-            <span className="tab-count">{totalCookiesCount}</span>
-          )}
+          {totalCookiesCount > 0 && <span className="tab-count">{totalCookiesCount}</span>}
         </button>
 
         <button
@@ -169,9 +167,7 @@ export default function DetailPanel({ capture, onClose }) {
         >
           <Key size={14} />
           <span>JWT Claims</span>
-          {jwts.length > 0 && (
-            <span className="tab-count badge-jwt">{jwts.length}</span>
-          )}
+          {jwts.length > 0 && <span className="tab-count badge-jwt">{jwts.length}</span>}
         </button>
 
         <button
@@ -299,7 +295,11 @@ export default function DetailPanel({ capture, onClose }) {
               </h4>
               {capture.request_body ? (
                 <JsonViewer
-                  data={reqBodyFormatted.isJson ? JSON.parse(capture.request_body) : capture.request_body}
+                  data={
+                    reqBodyFormatted.isJson
+                      ? JSON.parse(capture.request_body)
+                      : capture.request_body
+                  }
                   rawString={capture.request_body}
                   title="Request Data"
                 />
@@ -320,7 +320,11 @@ export default function DetailPanel({ capture, onClose }) {
               </h4>
               {capture.response_body ? (
                 <JsonViewer
-                  data={resBodyFormatted.isJson ? JSON.parse(capture.response_body) : capture.response_body}
+                  data={
+                    resBodyFormatted.isJson
+                      ? JSON.parse(capture.response_body)
+                      : capture.response_body
+                  }
                   rawString={capture.response_body}
                   title="Response Data"
                 />
@@ -370,7 +374,8 @@ export default function DetailPanel({ capture, onClose }) {
                           {cookie.attributes &&
                             Object.entries(cookie.attributes).map(([k, v]) => (
                               <span key={k} className="cookie-attr-pill">
-                                {k}{typeof v !== 'boolean' ? `=${v}` : ''}
+                                {k}
+                                {typeof v !== 'boolean' ? `=${v}` : ''}
                               </span>
                             ))}
                         </div>
@@ -469,12 +474,18 @@ export default function DetailPanel({ capture, onClose }) {
 
               <div className="overview-card">
                 <span className="overview-label">Started At</span>
-                <span className="overview-value">{capture.started_at ? new Date(capture.started_at).toLocaleString() : '-'}</span>
+                <span className="overview-value">
+                  {capture.started_at ? new Date(capture.started_at).toLocaleString() : '-'}
+                </span>
               </div>
 
               <div className="overview-card">
                 <span className="overview-label">Completed At</span>
-                <span className="overview-value">{capture.completed_at ? new Date(capture.completed_at).toLocaleString() : 'In-flight'}</span>
+                <span className="overview-value">
+                  {capture.completed_at
+                    ? new Date(capture.completed_at).toLocaleString()
+                    : 'In-flight'}
+                </span>
               </div>
 
               <div className="overview-card">

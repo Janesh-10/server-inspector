@@ -3,16 +3,11 @@ import {
   getStatusStyle,
   formatBytes,
   formatDuration,
-  formatTime
+  formatTime,
 } from '../utils/formatters';
 import { Terminal, Globe, Clock } from 'lucide-react';
 
-export default function TrafficTable({
-  captures,
-  selectedCapture,
-  onSelectCapture,
-  loading
-}) {
+export default function TrafficTable({ captures, selectedCapture, onSelectCapture, loading }) {
   if (loading && captures.length === 0) {
     return (
       <div className="table-empty-state">
@@ -32,7 +27,8 @@ export default function TrafficTable({
         </div>
         <h3 className="empty-title">No Captured Traffic Yet</h3>
         <p className="empty-description">
-          Route HTTP traffic through the local proxy server to start inspecting requests in real-time.
+          Route HTTP traffic through the local proxy server to start inspecting requests in
+          real-time.
         </p>
 
         <div className="empty-guide-card">
@@ -73,8 +69,10 @@ export default function TrafficTable({
             const duration = formatDuration(capture.started_at, capture.completed_at);
             const size = formatBytes(
               capture.response_body
-                ? (typeof capture.response_body === 'string' ? capture.response_body.length : capture.response_body?.length || 0)
-                : (capture.request_body?.length || 0)
+                ? typeof capture.response_body === 'string'
+                  ? capture.response_body.length
+                  : capture.response_body?.length || 0
+                : capture.request_body?.length || 0,
             );
 
             return (
@@ -90,7 +88,7 @@ export default function TrafficTable({
                     style={{
                       backgroundColor: methodStyle.bg,
                       color: methodStyle.text,
-                      borderColor: methodStyle.border
+                      borderColor: methodStyle.border,
                     }}
                   >
                     {capture.method || 'GET'}
@@ -104,7 +102,7 @@ export default function TrafficTable({
                     style={{
                       backgroundColor: statusStyle.bg,
                       color: statusStyle.text,
-                      borderColor: statusStyle.border
+                      borderColor: statusStyle.border,
                     }}
                   >
                     {capture.status_code || '...'}
@@ -113,9 +111,7 @@ export default function TrafficTable({
 
                 {/* Path & Query */}
                 <td className="td-path" title={capture.url || capture.path}>
-                  <div className="path-text">
-                    {capture.path || capture.url || '/'}
-                  </div>
+                  <div className="path-text">{capture.path || capture.url || '/'}</div>
                 </td>
 
                 {/* Host */}

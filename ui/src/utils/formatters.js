@@ -4,12 +4,12 @@
  * @returns {string}
  */
 export function formatBytes(bytes) {
-  if (bytes === undefined || bytes === null || bytes === "") return "-";
-  const num = typeof bytes === "string" ? parseInt(bytes, 10) : bytes;
-  if (isNaN(num) || num === 0) return "0 B";
+  if (bytes === undefined || bytes === null || bytes === '') return '-';
+  const num = typeof bytes === 'string' ? parseInt(bytes, 10) : bytes;
+  if (isNaN(num) || num === 0) return '0 B';
 
   const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(Math.abs(num)) / Math.log(k));
   const idx = Math.min(i, sizes.length - 1);
   return `${(num / Math.pow(k, idx)).toFixed(idx === 0 ? 0 : 1)} ${sizes[idx]}`;
@@ -22,11 +22,11 @@ export function formatBytes(bytes) {
  * @returns {string}
  */
 export function formatDuration(startedAt, completedAt) {
-  if (!startedAt || !completedAt) return "-";
+  if (!startedAt || !completedAt) return '-';
   const start = new Date(startedAt).getTime();
   const end = new Date(completedAt).getTime();
   const diff = end - start;
-  if (isNaN(diff) || diff < 0) return "-";
+  if (isNaN(diff) || diff < 0) return '-';
   if (diff < 1000) return `${diff}ms`;
   return `${(diff / 1000).toFixed(2)}s`;
 }
@@ -37,11 +37,11 @@ export function formatDuration(startedAt, completedAt) {
  * @returns {string}
  */
 export function formatTime(dateStr) {
-  if (!dateStr) return "-";
+  if (!dateStr) return '-';
   try {
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
-    const pad = (n, len = 2) => String(n).padStart(len, "0");
+    const pad = (n, len = 2) => String(n).padStart(len, '0');
     return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
   } catch {
     return dateStr;
@@ -53,51 +53,51 @@ export function formatTime(dateStr) {
  * @param {string} method
  * @returns {{ bg: string, text: string, border: string }}
  */
-export function getMethodStyle(method = "GET") {
+export function getMethodStyle(method = 'GET') {
   const m = method.toUpperCase();
   switch (m) {
-    case "GET":
+    case 'GET':
       return {
-        bg: "rgba(59, 130, 246, 0.15)",
-        text: "#60a5fa",
-        border: "rgba(59, 130, 246, 0.3)",
+        bg: 'rgba(59, 130, 246, 0.15)',
+        text: '#60a5fa',
+        border: 'rgba(59, 130, 246, 0.3)',
       };
-    case "POST":
+    case 'POST':
       return {
-        bg: "rgba(34, 197, 94, 0.15)",
-        text: "#4ade80",
-        border: "rgba(34, 197, 94, 0.3)",
+        bg: 'rgba(34, 197, 94, 0.15)',
+        text: '#4ade80',
+        border: 'rgba(34, 197, 94, 0.3)',
       };
-    case "PUT":
+    case 'PUT':
       return {
-        bg: "rgba(234, 179, 8, 0.15)",
-        text: "#facc15",
-        border: "rgba(234, 179, 8, 0.3)",
+        bg: 'rgba(234, 179, 8, 0.15)',
+        text: '#facc15',
+        border: 'rgba(234, 179, 8, 0.3)',
       };
-    case "PATCH":
+    case 'PATCH':
       return {
-        bg: "rgba(168, 85, 247, 0.15)",
-        text: "#c084fc",
-        border: "rgba(168, 85, 247, 0.3)",
+        bg: 'rgba(168, 85, 247, 0.15)',
+        text: '#c084fc',
+        border: 'rgba(168, 85, 247, 0.3)',
       };
-    case "DELETE":
+    case 'DELETE':
       return {
-        bg: "rgba(239, 68, 68, 0.15)",
-        text: "#f87171",
-        border: "rgba(239, 68, 68, 0.3)",
+        bg: 'rgba(239, 68, 68, 0.15)',
+        text: '#f87171',
+        border: 'rgba(239, 68, 68, 0.3)',
       };
-    case "OPTIONS":
-    case "HEAD":
+    case 'OPTIONS':
+    case 'HEAD':
       return {
-        bg: "rgba(148, 163, 184, 0.15)",
-        text: "#94a3b8",
-        border: "rgba(148, 163, 184, 0.3)",
+        bg: 'rgba(148, 163, 184, 0.15)',
+        text: '#94a3b8',
+        border: 'rgba(148, 163, 184, 0.3)',
       };
     default:
       return {
-        bg: "rgba(100, 116, 139, 0.15)",
-        text: "#cbd5e1",
-        border: "rgba(100, 116, 139, 0.3)",
+        bg: 'rgba(100, 116, 139, 0.15)',
+        text: '#cbd5e1',
+        border: 'rgba(100, 116, 139, 0.3)',
       };
   }
 }
@@ -110,44 +110,44 @@ export function getMethodStyle(method = "GET") {
 export function getStatusStyle(status) {
   if (!status) {
     return {
-      bg: "rgba(234, 179, 8, 0.15)",
-      text: "#facc15",
-      border: "rgba(234, 179, 8, 0.3)",
+      bg: 'rgba(234, 179, 8, 0.15)',
+      text: '#facc15',
+      border: 'rgba(234, 179, 8, 0.3)',
     };
   }
-  const s = typeof status === "string" ? parseInt(status, 10) : status;
+  const s = typeof status === 'string' ? parseInt(status, 10) : status;
   if (s >= 200 && s < 300) {
     return {
-      bg: "rgba(34, 197, 94, 0.15)",
-      text: "#4ade80",
-      border: "rgba(34, 197, 94, 0.3)",
+      bg: 'rgba(34, 197, 94, 0.15)',
+      text: '#4ade80',
+      border: 'rgba(34, 197, 94, 0.3)',
     };
   }
   if (s >= 300 && s < 400) {
     return {
-      bg: "rgba(56, 189, 248, 0.15)",
-      text: "#38bdf8",
-      border: "rgba(56, 189, 248, 0.3)",
+      bg: 'rgba(56, 189, 248, 0.15)',
+      text: '#38bdf8',
+      border: 'rgba(56, 189, 248, 0.3)',
     };
   }
   if (s >= 400 && s < 500) {
     return {
-      bg: "rgba(251, 146, 60, 0.15)",
-      text: "#fb923c",
-      border: "rgba(251, 146, 60, 0.3)",
+      bg: 'rgba(251, 146, 60, 0.15)',
+      text: '#fb923c',
+      border: 'rgba(251, 146, 60, 0.3)',
     };
   }
   if (s >= 500) {
     return {
-      bg: "rgba(239, 68, 68, 0.15)",
-      text: "#f87171",
-      border: "rgba(239, 68, 68, 0.3)",
+      bg: 'rgba(239, 68, 68, 0.15)',
+      text: '#f87171',
+      border: 'rgba(239, 68, 68, 0.3)',
     };
   }
   return {
-    bg: "rgba(148, 163, 184, 0.15)",
-    text: "#cbd5e1",
-    border: "rgba(148, 163, 184, 0.3)",
+    bg: 'rgba(148, 163, 184, 0.15)',
+    text: '#cbd5e1',
+    border: 'rgba(148, 163, 184, 0.3)',
   };
 }
 
@@ -164,20 +164,20 @@ export function parseCookies(cookieHeader, isSetCookie = false) {
   const results = [];
 
   for (const str of headers) {
-    if (typeof str !== "string") continue;
+    if (typeof str !== 'string') continue;
 
     if (isSetCookie) {
-      const parts = str.split(";").map((p) => p.trim());
+      const parts = str.split(';').map((p) => p.trim());
       if (parts.length === 0) continue;
       const [first, ...rest] = parts;
-      const eqIdx = first.indexOf("=");
+      const eqIdx = first.indexOf('=');
       if (eqIdx === -1) continue;
       const name = first.slice(0, eqIdx);
       const value = first.slice(eqIdx + 1);
 
       const attributes = {};
       for (const attr of rest) {
-        const aEq = attr.indexOf("=");
+        const aEq = attr.indexOf('=');
         if (aEq !== -1) {
           attributes[attr.slice(0, aEq)] = attr.slice(aEq + 1);
         } else {
@@ -186,10 +186,10 @@ export function parseCookies(cookieHeader, isSetCookie = false) {
       }
       results.push({ name, value, attributes });
     } else {
-      const pairs = str.split(";");
+      const pairs = str.split(';');
       for (const pair of pairs) {
         const p = pair.trim();
-        const eqIdx = p.indexOf("=");
+        const eqIdx = p.indexOf('=');
         if (eqIdx !== -1) {
           results.push({
             name: p.slice(0, eqIdx),
@@ -209,31 +209,26 @@ export function parseCookies(cookieHeader, isSetCookie = false) {
  * @param {string} [body]
  * @returns {Array<{ source: string, rawToken: string, header: Object, payload: Object, expired: boolean, expiresAt?: string }>}
  */
-export function extractAndDecodeJWTs(headers = {}, body = "") {
-  const jwtRegex =
-    /eyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]*/g;
+export function extractAndDecodeJWTs(headers = {}, body = '') {
+  const jwtRegex = /eyJ[a-zA-Z0-9_-]{10,}\.eyJ[a-zA-Z0-9_-]{10,}\.[a-zA-Z0-9_-]*/g;
   const candidates = [];
 
-  if (headers && typeof headers === "object") {
+  if (headers && typeof headers === 'object') {
     for (const [key, value] of Object.entries(headers)) {
-      const valStr = Array.isArray(value)
-        ? value.join(" ")
-        : String(value || "");
+      const valStr = Array.isArray(value) ? value.join(' ') : String(value || '');
       const matches = valStr.match(jwtRegex);
       if (matches) {
-        matches.forEach((token) =>
-          candidates.push({ source: `Header: ${key}`, rawToken: token }),
-        );
+        matches.forEach((token) => candidates.push({ source: `Header: ${key}`, rawToken: token }));
       }
     }
   }
 
-  if (body && typeof body === "string") {
+  if (body && typeof body === 'string') {
     const matches = body.match(jwtRegex);
     if (matches) {
       matches.forEach((token) => {
         if (!candidates.some((c) => c.rawToken === token)) {
-          candidates.push({ source: "Request/Response Body", rawToken: token });
+          candidates.push({ source: 'Request/Response Body', rawToken: token });
         }
       });
     }
@@ -243,19 +238,19 @@ export function extractAndDecodeJWTs(headers = {}, body = "") {
 
   for (const item of candidates) {
     try {
-      const parts = item.rawToken.split(".");
+      const parts = item.rawToken.split('.');
       if (parts.length < 2) continue;
 
       const decodeBase64Url = (str) => {
-        let base64 = str.replace(/-/g, "+").replace(/_/g, "/");
+        let base64 = str.replace(/-/g, '+').replace(/_/g, '/');
         while (base64.length % 4) {
-          base64 += "=";
+          base64 += '=';
         }
         return decodeURIComponent(
           atob(base64)
-            .split("")
-            .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-            .join(""),
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join(''),
         );
       };
 
@@ -292,8 +287,8 @@ export function extractAndDecodeJWTs(headers = {}, body = "") {
  * @returns {{ isJson: boolean, formatted: string, raw: string }}
  */
 export function formatJsonBody(str) {
-  if (!str || typeof str !== "string") {
-    return { isJson: false, formatted: "", raw: str || "" };
+  if (!str || typeof str !== 'string') {
+    return { isJson: false, formatted: '', raw: str || '' };
   }
   try {
     const parsed = JSON.parse(str);

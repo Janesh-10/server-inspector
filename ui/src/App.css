@@ -20,7 +20,8 @@
   --radius-sm: 6px;
   --radius-md: 8px;
   --radius-lg: 12px;
-  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --font-mono:
+    'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 }
 
 * {
@@ -474,7 +475,9 @@ body {
   font-size: 11px;
 }
 
-.size-text, .duration-text, .time-text {
+.size-text,
+.duration-text,
+.time-text {
   color: var(--text-muted);
   font-family: var(--font-mono);
   font-size: 11px;
@@ -1042,6 +1045,12 @@ body {
 }
 
 /* Utility margins */
-.mt-2 { margin-top: 8px; }
-.mt-4 { margin-top: 16px; }
-.mb-2 { margin-bottom: 8px; }
+.mt-2 {
+  margin-top: 8px;
+}
+.mt-4 {
+  margin-top: 16px;
+}
+.mb-2 {
+  margin-bottom: 8px;
+}

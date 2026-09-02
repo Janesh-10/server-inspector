@@ -1,7 +1,7 @@
-const Database = require("better-sqlite3");
-const path = require("path");
+const Database = require('better-sqlite3');
+const path = require('path');
 
-const DEFAULT_DB_PATH = path.join(__dirname, "traffic.db");
+const DEFAULT_DB_PATH = path.join(__dirname, 'traffic.db');
 
 let dbInstance = null;
 
@@ -84,7 +84,7 @@ function insertRequest(captureData) {
     `);
 
   const headersJson =
-    typeof captureData.request_headers === "object"
+    typeof captureData.request_headers === 'object'
       ? JSON.stringify(captureData.request_headers)
       : captureData.request_headers || null;
 
@@ -95,8 +95,7 @@ function insertRequest(captureData) {
     host: captureData.host || null,
     path: captureData.path || null,
     request_headers: headersJson,
-    request_body:
-      captureData.request_body !== undefined ? captureData.request_body : null,
+    request_body: captureData.request_body !== undefined ? captureData.request_body : null,
     started_at: captureData.started_at || new Date().toISOString(),
   });
 }
@@ -122,19 +121,15 @@ function updateResponse(id, responseData) {
     `);
 
   const headersJson =
-    typeof responseData.response_headers === "object"
+    typeof responseData.response_headers === 'object'
       ? JSON.stringify(responseData.response_headers)
       : responseData.response_headers || null;
 
   stmt.run({
     id,
-    status_code:
-      responseData.status_code !== undefined ? responseData.status_code : null,
+    status_code: responseData.status_code !== undefined ? responseData.status_code : null,
     response_headers: headersJson,
-    response_body:
-      responseData.response_body !== undefined
-        ? responseData.response_body
-        : null,
+    response_body: responseData.response_body !== undefined ? responseData.response_body : null,
     completed_at: responseData.completed_at || new Date().toISOString(),
   });
 }
@@ -155,32 +150,28 @@ function getCaptures(filters = {}) {
   const params = [];
 
   if (filters.method) {
-    conditions.push("UPPER(method) = UPPER(?)");
+    conditions.push('UPPER(method) = UPPER(?)');
     params.push(filters.method.trim());
   }
 
-  if (
-    filters.status !== undefined &&
-    filters.status !== null &&
-    filters.status !== ""
-  ) {
-    conditions.push("status_code = ?");
+  if (filters.status !== undefined && filters.status !== null && filters.status !== '') {
+    conditions.push('status_code = ?');
     params.push(parseInt(filters.status, 10));
   }
 
-  if (filters.q && filters.q.trim() !== "") {
+  if (filters.q && filters.q.trim() !== '') {
     const term = `%${filters.q.trim()}%`;
     conditions.push(
-      "(url LIKE ? OR path LIKE ? OR host LIKE ? OR request_body LIKE ? OR response_body LIKE ?)"
+      '(url LIKE ? OR path LIKE ? OR host LIKE ? OR request_body LIKE ? OR response_body LIKE ?)',
     );
     params.push(term, term, term, term, term);
   }
 
-  let sql = "SELECT * FROM captures";
+  let sql = 'SELECT * FROM captures';
   if (conditions.length > 0) {
-    sql += " WHERE " + conditions.join(" AND ");
+    sql += ' WHERE ' + conditions.join(' AND ');
   }
-  sql += " ORDER BY started_at DESC LIMIT ? OFFSET ?";
+  sql += ' ORDER BY started_at DESC LIMIT ? OFFSET ?';
 
   const limit = parseInt(filters.limit, 10) || 100;
   const offset = parseInt(filters.offset, 10) || 0;
@@ -196,7 +187,7 @@ function getCaptures(filters = {}) {
  */
 function getCaptureById(id) {
   const db = getDb();
-  return db.prepare("SELECT * FROM captures WHERE id = ?").get(id);
+  return db.prepare('SELECT * FROM captures WHERE id = ?').get(id);
 }
 
 /**
@@ -205,7 +196,7 @@ function getCaptureById(id) {
  */
 function clearCaptures() {
   const db = getDb();
-  const result = db.prepare("DELETE FROM captures").run();
+  const result = db.prepare('DELETE FROM captures').run();
   return result.changes;
 }
 

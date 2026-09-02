@@ -5,9 +5,7 @@ export default function JsonViewer({ data, rawString, title }) {
   const [copied, setCopied] = useState(false);
   const [viewMode, setViewMode] = useState('formatted'); // 'formatted' | 'raw'
 
-  const jsonStr = typeof data === 'string' 
-    ? data 
-    : JSON.stringify(data, null, 2);
+  const jsonStr = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(viewMode === 'raw' && rawString ? rawString : jsonStr);
@@ -26,14 +24,14 @@ export default function JsonViewer({ data, rawString, title }) {
         <div className="json-viewer-actions">
           {rawString && (
             <div className="view-mode-toggle">
-              <button 
+              <button
                 type="button"
                 className={`mode-btn ${viewMode === 'formatted' ? 'active' : ''}`}
                 onClick={() => setViewMode('formatted')}
               >
                 Pretty JSON
               </button>
-              <button 
+              <button
                 type="button"
                 className={`mode-btn ${viewMode === 'raw' ? 'active' : ''}`}
                 onClick={() => setViewMode('raw')}
@@ -42,12 +40,7 @@ export default function JsonViewer({ data, rawString, title }) {
               </button>
             </div>
           )}
-          <button 
-            type="button"
-            className="copy-btn"
-            onClick={handleCopy}
-            title="Copy to clipboard"
-          >
+          <button type="button" className="copy-btn" onClick={handleCopy} title="Copy to clipboard">
             {copied ? <Check size={14} className="text-emerald-400" /> : <Copy size={14} />}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>

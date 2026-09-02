@@ -12,7 +12,7 @@ const STATUS_PRESETS = [
   { label: '403 Forbidden', value: '403' },
   { label: '404 Not Found', value: '404' },
   { label: '500 Server Error', value: '500' },
-  { label: '502 Bad Gateway', value: '502' }
+  { label: '502 Bad Gateway', value: '502' },
 ];
 
 export default function FilterBar({
@@ -23,7 +23,7 @@ export default function FilterBar({
   searchQuery,
   setSearchQuery,
   onResetFilters,
-  hasActiveFilters
+  hasActiveFilters,
 }) {
   return (
     <div className="filter-bar">

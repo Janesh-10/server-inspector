@@ -5,6 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "lint:server": "eslint server",
     "lint:ui": "npm --prefix ui run lint",
     "lint": "npm run lint:server && npm run lint:ui",
@@ -20,6 +22,7 @@
     "@eslint/js": "^10.0.1",
     "concurrently": "^10.0.5",
     "eslint": "^10.9.1",
-    "globals": "^17.12.0"
+    "globals": "^17.12.0",
+    "prettier": "^3.9.6"
   }
 }
