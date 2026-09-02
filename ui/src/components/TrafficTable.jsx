@@ -1,19 +1,17 @@
-import React from "react";
 import {
   getMethodStyle,
   getStatusStyle,
   formatBytes,
   formatDuration,
-  formatTime,
-} from "../utils/formatters";
-import { Terminal, Globe, ArrowRight, Clock, HardDrive } from "lucide-react";
+  formatTime
+} from '../utils/formatters';
+import { Terminal, Globe, Clock } from 'lucide-react';
 
 export default function TrafficTable({
   captures,
   selectedCapture,
   onSelectCapture,
-  loading,
-  searchQuery,
+  loading
 }) {
   if (loading && captures.length === 0) {
     return (
@@ -34,8 +32,7 @@ export default function TrafficTable({
         </div>
         <h3 className="empty-title">No Captured Traffic Yet</h3>
         <p className="empty-description">
-          Route HTTP traffic through the local proxy server to start inspecting
-          requests in real-time.
+          Route HTTP traffic through the local proxy server to start inspecting requests in real-time.
         </p>
 
         <div className="empty-guide-card">
@@ -47,8 +44,7 @@ export default function TrafficTable({
             <code>curl -x http://127.0.0.1:8888 http://httpbin.org/get</code>
           </pre>
           <div className="guide-hint">
-            Or configure your application:{" "}
-            <code>export HTTP_PROXY=http://127.0.0.1:8888</code>
+            Or configure your application: <code>export HTTP_PROXY=http://127.0.0.1:8888</code>
           </div>
         </div>
       </div>
@@ -71,26 +67,20 @@ export default function TrafficTable({
         </thead>
         <tbody>
           {captures.map((capture, idx) => {
-            const isSelected =
-              selectedCapture && selectedCapture.id === capture.id;
+            const isSelected = selectedCapture && selectedCapture.id === capture.id;
             const methodStyle = getMethodStyle(capture.method);
             const statusStyle = getStatusStyle(capture.status_code);
-            const duration = formatDuration(
-              capture.started_at,
-              capture.completed_at,
-            );
+            const duration = formatDuration(capture.started_at, capture.completed_at);
             const size = formatBytes(
               capture.response_body
-                ? typeof capture.response_body === "string"
-                  ? capture.response_body.length
-                  : capture.response_body?.length || 0
-                : capture.request_body?.length || 0,
+                ? (typeof capture.response_body === 'string' ? capture.response_body.length : capture.response_body?.length || 0)
+                : (capture.request_body?.length || 0)
             );
 
             return (
               <tr
                 key={capture.id || idx}
-                className={`traffic-row ${isSelected ? "row-selected" : ""}`}
+                className={`traffic-row ${isSelected ? 'row-selected' : ''}`}
                 onClick={() => onSelectCapture(capture)}
               >
                 {/* Method */}
@@ -100,10 +90,10 @@ export default function TrafficTable({
                     style={{
                       backgroundColor: methodStyle.bg,
                       color: methodStyle.text,
-                      borderColor: methodStyle.border,
+                      borderColor: methodStyle.border
                     }}
                   >
-                    {capture.method || "GET"}
+                    {capture.method || 'GET'}
                   </span>
                 </td>
 
@@ -114,23 +104,23 @@ export default function TrafficTable({
                     style={{
                       backgroundColor: statusStyle.bg,
                       color: statusStyle.text,
-                      borderColor: statusStyle.border,
+                      borderColor: statusStyle.border
                     }}
                   >
-                    {capture.status_code || "..."}
+                    {capture.status_code || '...'}
                   </span>
                 </td>
 
                 {/* Path & Query */}
                 <td className="td-path" title={capture.url || capture.path}>
                   <div className="path-text">
-                    {capture.path || capture.url || "/"}
+                    {capture.path || capture.url || '/'}
                   </div>
                 </td>
 
                 {/* Host */}
                 <td className="td-host" title={capture.host}>
-                  <span className="host-text">{capture.host || "-"}</span>
+                  <span className="host-text">{capture.host || '-'}</span>
                 </td>
 
                 {/* Size */}
@@ -145,9 +135,7 @@ export default function TrafficTable({
 
                 {/* Time */}
                 <td className="td-time">
-                  <span className="time-text">
-                    {formatTime(capture.started_at)}
-                  </span>
+                  <span className="time-text">{formatTime(capture.started_at)}</span>
                 </td>
               </tr>
             );

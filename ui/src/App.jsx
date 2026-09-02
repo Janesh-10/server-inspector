@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import Header from './components/Header';
 import FilterBar from './components/FilterBar';
 import TrafficTable from './components/TrafficTable';
@@ -30,8 +30,36 @@ export default function App() {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  // Fetch captures from REST API using Axios
-  const fetchCaptures = useCallback(async () => {
+  // Fetch on mount and when filters change without synchronous setState in effect body
+  useEffect(() => {
+    let ignore = false;
+
+    getCaptures({
+      method: methodFilter,
+      status: statusFilter,
+      q: debouncedQuery
+    })
+      .then((data) => {
+        if (!ignore) {
+          setCaptures(data);
+          if (!methodFilter && !statusFilter && !debouncedQuery) {
+            setTotalCount(data.length);
+          }
+        }
+      })
+      .catch((err) => {
+        if (!ignore) {
+          console.error('Error fetching captures via axios:', err);
+        }
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [methodFilter, statusFilter, debouncedQuery]);
+
+  // Manual refresh callback
+  const handleRefresh = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getCaptures({
@@ -39,22 +67,16 @@ export default function App() {
         status: statusFilter,
         q: debouncedQuery
       });
-
       setCaptures(data);
       if (!methodFilter && !statusFilter && !debouncedQuery) {
         setTotalCount(data.length);
       }
     } catch (err) {
-      console.error('Error fetching captures via axios:', err);
+      console.error('Error refreshing captures:', err);
     } finally {
       setLoading(false);
     }
   }, [methodFilter, statusFilter, debouncedQuery]);
-
-  // Fetch on mount and when filters change
-  useEffect(() => {
-    fetchCaptures();
-  }, [fetchCaptures]);
 
   // WebSocket Live Push Subscription
   useEffect(() => {
@@ -174,7 +196,7 @@ export default function App() {
         capturesCount={captures.length}
         totalCaptures={totalCount || captures.length}
         onClearAll={handleClearAll}
-        onRefresh={fetchCaptures}
+        onRefresh={handleRefresh}
         loading={loading}
       />
 
@@ -198,7 +220,6 @@ export default function App() {
             selectedCapture={selectedCapture}
             onSelectCapture={setSelectedCapture}
             loading={loading}
-            searchQuery={debouncedQuery}
           />
         </div>
 

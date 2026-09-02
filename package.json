@@ -1,9 +1,13 @@
 {
   "name": "api-traffic-inspector",
   "version": "1.0.0",
+  "type": "module",
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint:server": "eslint server",
+    "lint:ui": "npm --prefix ui run lint",
+    "lint": "npm run lint:server && npm run lint:ui",
     "server": "node server/index.js",
     "ui": "npm run dev --prefix ui",
     "dev": "concurrently \"npm run server\" \"npm run ui\"",
@@ -13,6 +17,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "concurrently": "^10.0.5"
+    "@eslint/js": "^10.0.1",
+    "concurrently": "^10.0.5",
+    "eslint": "^10.9.1",
+    "globals": "^17.12.0"
   }
 }

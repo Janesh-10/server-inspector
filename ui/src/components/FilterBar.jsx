@@ -1,28 +1,18 @@
-import React from "react";
-import { Search, X, RotateCcw } from "lucide-react";
+import { Search, X, RotateCcw } from 'lucide-react';
 
-const HTTP_METHODS = [
-  "ALL",
-  "GET",
-  "POST",
-  "PUT",
-  "PATCH",
-  "DELETE",
-  "OPTIONS",
-  "HEAD",
-];
+const HTTP_METHODS = ['ALL', 'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
 const STATUS_PRESETS = [
-  { label: "All Statuses", value: "" },
-  { label: "2xx Success", value: "200" },
-  { label: "201 Created", value: "201" },
-  { label: "204 No Content", value: "204" },
-  { label: "400 Bad Request", value: "400" },
-  { label: "401 Unauthorized", value: "401" },
-  { label: "403 Forbidden", value: "403" },
-  { label: "404 Not Found", value: "404" },
-  { label: "500 Server Error", value: "500" },
-  { label: "502 Bad Gateway", value: "502" },
+  { label: 'All Statuses', value: '' },
+  { label: '2xx Success', value: '200' },
+  { label: '201 Created', value: '201' },
+  { label: '204 No Content', value: '204' },
+  { label: '400 Bad Request', value: '400' },
+  { label: '401 Unauthorized', value: '401' },
+  { label: '403 Forbidden', value: '403' },
+  { label: '404 Not Found', value: '404' },
+  { label: '500 Server Error', value: '500' },
+  { label: '502 Bad Gateway', value: '502' }
 ];
 
 export default function FilterBar({
@@ -33,7 +23,7 @@ export default function FilterBar({
   searchQuery,
   setSearchQuery,
   onResetFilters,
-  hasActiveFilters,
+  hasActiveFilters
 }) {
   return (
     <div className="filter-bar">
@@ -41,14 +31,13 @@ export default function FilterBar({
         <span className="filter-label">Method:</span>
         <div className="method-chips">
           {HTTP_METHODS.map((m) => {
-            const isSelected =
-              (m === "ALL" && !methodFilter) || methodFilter === m;
+            const isSelected = (m === 'ALL' && !methodFilter) || methodFilter === m;
             return (
               <button
                 key={m}
                 type="button"
-                className={`method-chip ${m.toLowerCase()} ${isSelected ? "selected" : ""}`}
-                onClick={() => setMethodFilter(m === "ALL" ? "" : m)}
+                className={`method-chip ${m.toLowerCase()} ${isSelected ? 'selected' : ''}`}
+                onClick={() => setMethodFilter(m === 'ALL' ? '' : m)}
               >
                 {m}
               </button>
@@ -77,7 +66,7 @@ export default function FilterBar({
           placeholder="Custom code..."
           className="filter-input-status"
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value.replace(/\D/g, ""))}
+          onChange={(e) => setStatusFilter(e.target.value.replace(/\D/g, ''))}
           maxLength={3}
         />
       </div>
@@ -98,7 +87,7 @@ export default function FilterBar({
             <button
               type="button"
               className="search-clear-btn"
-              onClick={() => setSearchQuery("")}
+              onClick={() => setSearchQuery('')}
               title="Clear search"
             >
               <X size={14} />

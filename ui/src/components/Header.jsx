@@ -1,12 +1,4 @@
-import React from "react";
-import {
-  Activity,
-  Trash2,
-  RefreshCw,
-  Radio,
-  Server,
-  ShieldCheck,
-} from "lucide-react";
+import { Activity, Trash2, RefreshCw, Radio, Server } from 'lucide-react';
 
 export default function Header({
   wsStatus,
@@ -14,7 +6,7 @@ export default function Header({
   totalCaptures,
   onClearAll,
   onRefresh,
-  loading,
+  loading
 }) {
   return (
     <header className="app-header">
@@ -25,9 +17,7 @@ export default function Header({
           </div>
           <div>
             <h1 className="brand-title">API Traffic Inspector</h1>
-            <span className="brand-subtitle">
-              Real-time HTTP Proxy & Traffic Interceptor
-            </span>
+            <span className="brand-subtitle">Real-time HTTP Proxy & Traffic Interceptor</span>
           </div>
         </div>
 
@@ -41,14 +31,11 @@ export default function Header({
       <div className="header-right">
         {/* WebSocket Connection Status */}
         <div className={`ws-status-badge ${wsStatus}`}>
-          <Radio
-            size={14}
-            className={`ws-status-icon ${wsStatus === "connected" ? "animate-pulse" : ""}`}
-          />
+          <Radio size={14} className={`ws-status-icon ${wsStatus === 'connected' ? 'animate-pulse' : ''}`} />
           <span className="ws-status-text">
-            {wsStatus === "connected" && "Live Connected"}
-            {wsStatus === "connecting" && "Connecting..."}
-            {wsStatus === "disconnected" && "Disconnected"}
+            {wsStatus === 'connected' && 'Live Connected'}
+            {wsStatus === 'connecting' && 'Connecting...'}
+            {wsStatus === 'disconnected' && 'Disconnected'}
           </span>
         </div>
 
@@ -69,7 +56,7 @@ export default function Header({
           disabled={loading}
           title="Refresh captures list"
         >
-          <RefreshCw size={15} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={15} className={loading ? 'animate-spin' : ''} />
           <span>Refresh</span>
         </button>
 

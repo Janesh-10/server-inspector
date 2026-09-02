@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   X,
   Copy,
@@ -8,35 +8,31 @@ import {
   Code,
   FileText,
   Clock,
-  Globe,
-  ExternalLink,
   ShieldAlert,
-  ShieldCheck,
-  Layers,
-} from "lucide-react";
+  Layers
+} from 'lucide-react';
 import {
   getMethodStyle,
   getStatusStyle,
   formatDuration,
-  formatTime,
   parseCookies,
   extractAndDecodeJWTs,
-  formatJsonBody,
-} from "../utils/formatters";
-import JsonViewer from "./JsonViewer";
+  formatJsonBody
+} from '../utils/formatters';
+import JsonViewer from './JsonViewer';
 
 export default function DetailPanel({ capture, onClose }) {
-  const [activeTab, setActiveTab] = useState("headers"); // 'headers' | 'body' | 'cookies' | 'jwt' | 'overview'
+  const [activeTab, setActiveTab] = useState('headers'); // 'headers' | 'body' | 'cookies' | 'jwt' | 'overview'
   const [urlCopied, setUrlCopied] = useState(false);
-  const [headersViewMode, setHeadersViewMode] = useState("parsed"); // 'parsed' | 'raw'
+  const [headersViewMode, setHeadersViewMode] = useState('parsed'); // 'parsed' | 'raw'
 
   // Close on Escape key
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === 'Escape') onClose();
     };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
   if (!capture) return null;
@@ -46,40 +42,27 @@ export default function DetailPanel({ capture, onClose }) {
   const duration = formatDuration(capture.started_at, capture.completed_at);
 
   const handleCopyUrl = () => {
-    navigator.clipboard.writeText(capture.url || "");
+    navigator.clipboard.writeText(capture.url || '');
     setUrlCopied(true);
     setTimeout(() => setUrlCopied(false), 2000);
   };
 
   // Safe headers objects
-  const reqHeaders =
-    typeof capture.request_headers === "object" &&
-    capture.request_headers !== null
-      ? capture.request_headers
-      : {};
-  const resHeaders =
-    typeof capture.response_headers === "object" &&
-    capture.response_headers !== null
-      ? capture.response_headers
-      : {};
+  const reqHeaders = typeof capture.request_headers === 'object' && capture.request_headers !== null
+    ? capture.request_headers
+    : {};
+  const resHeaders = typeof capture.response_headers === 'object' && capture.response_headers !== null
+    ? capture.response_headers
+    : {};
 
   // Cookie parsing
-  const reqCookies = parseCookies(
-    reqHeaders.cookie || reqHeaders.Cookie,
-    false,
-  );
-  const resCookies = parseCookies(
-    resHeaders["set-cookie"] || resHeaders["Set-Cookie"],
-    true,
-  );
+  const reqCookies = parseCookies(reqHeaders.cookie || reqHeaders.Cookie, false);
+  const resCookies = parseCookies(resHeaders['set-cookie'] || resHeaders['Set-Cookie'], true);
   const totalCookiesCount = reqCookies.length + resCookies.length;
 
   // JWT Extraction
   const allHeadersCombined = { ...reqHeaders, ...resHeaders };
-  const jwts = extractAndDecodeJWTs(
-    allHeadersCombined,
-    `${capture.request_body || ""} ${capture.response_body || ""}`,
-  );
+  const jwts = extractAndDecodeJWTs(allHeadersCombined, `${capture.request_body || ''} ${capture.response_body || ''}`);
 
   // Body formatting
   const reqBodyFormatted = formatJsonBody(capture.request_body);
@@ -95,10 +78,10 @@ export default function DetailPanel({ capture, onClose }) {
             style={{
               backgroundColor: methodStyle.bg,
               color: methodStyle.text,
-              borderColor: methodStyle.border,
+              borderColor: methodStyle.border
             }}
           >
-            {capture.method || "GET"}
+            {capture.method || 'GET'}
           </span>
 
           <span
@@ -106,10 +89,10 @@ export default function DetailPanel({ capture, onClose }) {
             style={{
               backgroundColor: statusStyle.bg,
               color: statusStyle.text,
-              borderColor: statusStyle.border,
+              borderColor: statusStyle.border
             }}
           >
-            {capture.status_code || "Pending"}
+            {capture.status_code || 'Pending'}
           </span>
 
           <div className="url-container" title={capture.url}>
@@ -120,11 +103,7 @@ export default function DetailPanel({ capture, onClose }) {
               onClick={handleCopyUrl}
               title="Copy URL"
             >
-              {urlCopied ? (
-                <Check size={13} className="text-emerald-400" />
-              ) : (
-                <Copy size={13} />
-              )}
+              {urlCopied ? <Check size={13} className="text-emerald-400" /> : <Copy size={13} />}
             </button>
           </div>
         </div>
@@ -149,8 +128,8 @@ export default function DetailPanel({ capture, onClose }) {
       <div className="detail-tabs">
         <button
           type="button"
-          className={`tab-btn ${activeTab === "headers" ? "active" : ""}`}
-          onClick={() => setActiveTab("headers")}
+          className={`tab-btn ${activeTab === 'headers' ? 'active' : ''}`}
+          onClick={() => setActiveTab('headers')}
         >
           <Layers size={14} />
           <span>Headers</span>
@@ -161,8 +140,8 @@ export default function DetailPanel({ capture, onClose }) {
 
         <button
           type="button"
-          className={`tab-btn ${activeTab === "body" ? "active" : ""}`}
-          onClick={() => setActiveTab("body")}
+          className={`tab-btn ${activeTab === 'body' ? 'active' : ''}`}
+          onClick={() => setActiveTab('body')}
         >
           <Code size={14} />
           <span>Payload & Body</span>
@@ -173,8 +152,8 @@ export default function DetailPanel({ capture, onClose }) {
 
         <button
           type="button"
-          className={`tab-btn ${activeTab === "cookies" ? "active" : ""}`}
-          onClick={() => setActiveTab("cookies")}
+          className={`tab-btn ${activeTab === 'cookies' ? 'active' : ''}`}
+          onClick={() => setActiveTab('cookies')}
         >
           <CookieIcon size={14} />
           <span>Cookies</span>
@@ -185,8 +164,8 @@ export default function DetailPanel({ capture, onClose }) {
 
         <button
           type="button"
-          className={`tab-btn ${activeTab === "jwt" ? "active" : ""}`}
-          onClick={() => setActiveTab("jwt")}
+          className={`tab-btn ${activeTab === 'jwt' ? 'active' : ''}`}
+          onClick={() => setActiveTab('jwt')}
         >
           <Key size={14} />
           <span>JWT Claims</span>
@@ -197,8 +176,8 @@ export default function DetailPanel({ capture, onClose }) {
 
         <button
           type="button"
-          className={`tab-btn ${activeTab === "overview" ? "active" : ""}`}
-          onClick={() => setActiveTab("overview")}
+          className={`tab-btn ${activeTab === 'overview' ? 'active' : ''}`}
+          onClick={() => setActiveTab('overview')}
         >
           <FileText size={14} />
           <span>Overview</span>
@@ -208,21 +187,21 @@ export default function DetailPanel({ capture, onClose }) {
       {/* Tab Contents */}
       <div className="detail-content">
         {/* ================= HEADERS TAB ================= */}
-        {activeTab === "headers" && (
+        {activeTab === 'headers' && (
           <div className="tab-section">
             <div className="section-toolbar">
               <div className="view-mode-toggle">
                 <button
                   type="button"
-                  className={`mode-btn ${headersViewMode === "parsed" ? "active" : ""}`}
-                  onClick={() => setHeadersViewMode("parsed")}
+                  className={`mode-btn ${headersViewMode === 'parsed' ? 'active' : ''}`}
+                  onClick={() => setHeadersViewMode('parsed')}
                 >
                   Key-Value Table
                 </button>
                 <button
                   type="button"
-                  className={`mode-btn ${headersViewMode === "raw" ? "active" : ""}`}
-                  onClick={() => setHeadersViewMode("raw")}
+                  className={`mode-btn ${headersViewMode === 'raw' ? 'active' : ''}`}
+                  onClick={() => setHeadersViewMode('raw')}
                 >
                   Raw Text
                 </button>
@@ -233,12 +212,10 @@ export default function DetailPanel({ capture, onClose }) {
             <div className="headers-block">
               <h4 className="block-title">
                 <span>Request Headers</span>
-                <span className="count-tag">
-                  {Object.keys(reqHeaders).length}
-                </span>
+                <span className="count-tag">{Object.keys(reqHeaders).length}</span>
               </h4>
 
-              {headersViewMode === "parsed" ? (
+              {headersViewMode === 'parsed' ? (
                 Object.keys(reqHeaders).length > 0 ? (
                   <div className="headers-table-wrapper">
                     <table className="headers-table">
@@ -247,9 +224,7 @@ export default function DetailPanel({ capture, onClose }) {
                           <tr key={key}>
                             <td className="header-name">{key}</td>
                             <td className="header-value">
-                              {Array.isArray(val)
-                                ? val.join("; ")
-                                : String(val)}
+                              {Array.isArray(val) ? val.join('; ') : String(val)}
                             </td>
                           </tr>
                         ))}
@@ -263,11 +238,8 @@ export default function DetailPanel({ capture, onClose }) {
                 <pre className="raw-headers-block">
                   <code>
                     {Object.entries(reqHeaders)
-                      .map(
-                        ([k, v]) =>
-                          `${k}: ${Array.isArray(v) ? v.join("; ") : v}`,
-                      )
-                      .join("\n") || "No headers"}
+                      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join('; ') : v}`)
+                      .join('\n') || 'No headers'}
                   </code>
                 </pre>
               )}
@@ -277,12 +249,10 @@ export default function DetailPanel({ capture, onClose }) {
             <div className="headers-block mt-4">
               <h4 className="block-title">
                 <span>Response Headers</span>
-                <span className="count-tag">
-                  {Object.keys(resHeaders).length}
-                </span>
+                <span className="count-tag">{Object.keys(resHeaders).length}</span>
               </h4>
 
-              {headersViewMode === "parsed" ? (
+              {headersViewMode === 'parsed' ? (
                 Object.keys(resHeaders).length > 0 ? (
                   <div className="headers-table-wrapper">
                     <table className="headers-table">
@@ -291,9 +261,7 @@ export default function DetailPanel({ capture, onClose }) {
                           <tr key={key}>
                             <td className="header-name">{key}</td>
                             <td className="header-value">
-                              {Array.isArray(val)
-                                ? val.join("; ")
-                                : String(val)}
+                              {Array.isArray(val) ? val.join('; ') : String(val)}
                             </td>
                           </tr>
                         ))}
@@ -307,11 +275,8 @@ export default function DetailPanel({ capture, onClose }) {
                 <pre className="raw-headers-block">
                   <code>
                     {Object.entries(resHeaders)
-                      .map(
-                        ([k, v]) =>
-                          `${k}: ${Array.isArray(v) ? v.join("; ") : v}`,
-                      )
-                      .join("\n") || "No headers"}
+                      .map(([k, v]) => `${k}: ${Array.isArray(v) ? v.join('; ') : v}`)
+                      .join('\n') || 'No headers'}
                   </code>
                 </pre>
               )}
@@ -320,7 +285,7 @@ export default function DetailPanel({ capture, onClose }) {
         )}
 
         {/* ================= BODY TAB ================= */}
-        {activeTab === "body" && (
+        {activeTab === 'body' && (
           <div className="tab-section">
             {/* Request Body */}
             <div className="body-block">
@@ -328,18 +293,13 @@ export default function DetailPanel({ capture, onClose }) {
                 <span>Request Payload</span>
                 {capture.request_body && (
                   <span className="count-tag">
-                    {capture.request_body.length} bytes{" "}
-                    {reqBodyFormatted.isJson && "• JSON"}
+                    {capture.request_body.length} bytes {reqBodyFormatted.isJson && '• JSON'}
                   </span>
                 )}
               </h4>
               {capture.request_body ? (
                 <JsonViewer
-                  data={
-                    reqBodyFormatted.isJson
-                      ? JSON.parse(capture.request_body)
-                      : capture.request_body
-                  }
+                  data={reqBodyFormatted.isJson ? JSON.parse(capture.request_body) : capture.request_body}
                   rawString={capture.request_body}
                   title="Request Data"
                 />
@@ -354,18 +314,13 @@ export default function DetailPanel({ capture, onClose }) {
                 <span>Response Body</span>
                 {capture.response_body && (
                   <span className="count-tag">
-                    {capture.response_body.length} bytes{" "}
-                    {resBodyFormatted.isJson && "• JSON"}
+                    {capture.response_body.length} bytes {resBodyFormatted.isJson && '• JSON'}
                   </span>
                 )}
               </h4>
               {capture.response_body ? (
                 <JsonViewer
-                  data={
-                    resBodyFormatted.isJson
-                      ? JSON.parse(capture.response_body)
-                      : capture.response_body
-                  }
+                  data={resBodyFormatted.isJson ? JSON.parse(capture.response_body) : capture.response_body}
                   rawString={capture.response_body}
                   title="Response Data"
                 />
@@ -377,7 +332,7 @@ export default function DetailPanel({ capture, onClose }) {
         )}
 
         {/* ================= COOKIES TAB ================= */}
-        {activeTab === "cookies" && (
+        {activeTab === 'cookies' && (
           <div className="tab-section">
             {/* Request Cookies */}
             <div className="cookie-block">
@@ -415,8 +370,7 @@ export default function DetailPanel({ capture, onClose }) {
                           {cookie.attributes &&
                             Object.entries(cookie.attributes).map(([k, v]) => (
                               <span key={k} className="cookie-attr-pill">
-                                {k}
-                                {typeof v !== "boolean" ? `=${v}` : ""}
+                                {k}{typeof v !== 'boolean' ? `=${v}` : ''}
                               </span>
                             ))}
                         </div>
@@ -426,16 +380,14 @@ export default function DetailPanel({ capture, onClose }) {
                   ))}
                 </div>
               ) : (
-                <div className="empty-substate">
-                  No response Set-Cookie headers
-                </div>
+                <div className="empty-substate">No response Set-Cookie headers</div>
               )}
             </div>
           </div>
         )}
 
         {/* ================= JWT CLAIMS TAB ================= */}
-        {activeTab === "jwt" && (
+        {activeTab === 'jwt' && (
           <div className="tab-section">
             {jwts.length > 0 ? (
               <div className="jwts-container">
@@ -451,29 +403,22 @@ export default function DetailPanel({ capture, onClose }) {
                           jwt.expired ? (
                             <span className="jwt-status-tag expired">
                               <ShieldAlert size={13} />
-                              Expired (
-                              {new Date(jwt.expiresAt).toLocaleTimeString()})
+                              Expired ({new Date(jwt.expiresAt).toLocaleTimeString()})
                             </span>
                           ) : (
                             <span className="jwt-status-tag valid">
-                              <ShieldCheck size={13} />
-                              Valid (Expires{" "}
-                              {new Date(jwt.expiresAt).toLocaleTimeString()})
+                              Valid (Expires {new Date(jwt.expiresAt).toLocaleTimeString()})
                             </span>
                           )
                         ) : (
-                          <span className="jwt-status-tag no-exp">
-                            No Expiration Claim
-                          </span>
+                          <span className="jwt-status-tag no-exp">No Expiration Claim</span>
                         )}
                       </div>
                     </div>
 
                     {/* JWT Header */}
                     <div className="jwt-sub-block">
-                      <h5 className="jwt-sub-title">
-                        JOSE Header (Algorithm & Token Type)
-                      </h5>
+                      <h5 className="jwt-sub-title">JOSE Header (Algorithm & Token Type)</h5>
                       <pre className="jwt-json-block">
                         <code>{JSON.stringify(jwt.header, null, 2)}</code>
                       </pre>
@@ -481,9 +426,7 @@ export default function DetailPanel({ capture, onClose }) {
 
                     {/* JWT Payload / Claims */}
                     <div className="jwt-sub-block mt-2">
-                      <h5 className="jwt-sub-title">
-                        Decoded Payload / Claims
-                      </h5>
+                      <h5 className="jwt-sub-title">Decoded Payload / Claims</h5>
                       <pre className="jwt-json-block">
                         <code>{JSON.stringify(jwt.payload, null, 2)}</code>
                       </pre>
@@ -494,17 +437,14 @@ export default function DetailPanel({ capture, onClose }) {
             ) : (
               <div className="empty-substate">
                 <Key size={32} className="text-gray-500 mb-2" />
-                <p>
-                  No JWT tokens detected in Authorization headers, cookies, or
-                  body.
-                </p>
+                <p>No JWT tokens detected in Authorization headers, cookies, or body.</p>
               </div>
             )}
           </div>
         )}
 
         {/* ================= OVERVIEW TAB ================= */}
-        {activeTab === "overview" && (
+        {activeTab === 'overview' && (
           <div className="tab-section">
             <div className="overview-grid">
               <div className="overview-card">
@@ -514,41 +454,27 @@ export default function DetailPanel({ capture, onClose }) {
 
               <div className="overview-card">
                 <span className="overview-label">Host Destination</span>
-                <span className="overview-value font-mono">
-                  {capture.host || "-"}
-                </span>
+                <span className="overview-value font-mono">{capture.host || '-'}</span>
               </div>
 
               <div className="overview-card">
                 <span className="overview-label">Request Path</span>
-                <span className="overview-value font-mono">
-                  {capture.path || "-"}
-                </span>
+                <span className="overview-value font-mono">{capture.path || '-'}</span>
               </div>
 
               <div className="overview-card">
                 <span className="overview-label">Full URL</span>
-                <span className="overview-value font-mono break-all">
-                  {capture.url || "-"}
-                </span>
+                <span className="overview-value font-mono break-all">{capture.url || '-'}</span>
               </div>
 
               <div className="overview-card">
                 <span className="overview-label">Started At</span>
-                <span className="overview-value">
-                  {capture.started_at
-                    ? new Date(capture.started_at).toLocaleString()
-                    : "-"}
-                </span>
+                <span className="overview-value">{capture.started_at ? new Date(capture.started_at).toLocaleString() : '-'}</span>
               </div>
 
               <div className="overview-card">
                 <span className="overview-label">Completed At</span>
-                <span className="overview-value">
-                  {capture.completed_at
-                    ? new Date(capture.completed_at).toLocaleString()
-                    : "In-flight"}
-                </span>
+                <span className="overview-value">{capture.completed_at ? new Date(capture.completed_at).toLocaleString() : 'In-flight'}</span>
               </div>
 
               <div className="overview-card">
@@ -558,9 +484,7 @@ export default function DetailPanel({ capture, onClose }) {
 
               <div className="overview-card">
                 <span className="overview-label">Status Code</span>
-                <span className="overview-value">
-                  {capture.status_code || "Pending"}
-                </span>
+                <span className="overview-value">{capture.status_code || 'Pending'}</span>
               </div>
             </div>
           </div>

@@ -51,6 +51,19 @@ function extractHost(req) {
 }
 
 /**
+ * Safely extracts body text or decoded buffer string from request/response.
+ * @param {import('mockttp').CompletedRequest | import('mockttp').CompletedResponse} entity
+ * @returns {Promise<string|null>}
+ */
+async function extractBodyText(entity) {
+    try {
+        return await entity.body.getText();
+    } catch {
+        return entity.body?.buffer ? entity.body.buffer.toString('utf8') : null;
+    }
+}
+
+/**
  * Creates and starts a Mockttp HTTP proxy server instance and WebSocket broadcast channel.
  * 
  * Captures HTTP requests, saves request/response details into SQLite `captures` table,
@@ -82,13 +95,7 @@ async function startProxyServer(port = 8888, options = {}) {
 
     // 1. Intercept incoming request and persist to SQLite
     await server.on('request', async (req) => {
-        let body = null;
-        try {
-            body = await req.body.getText();
-        } catch {
-            body = req.body?.buffer ? req.body.buffer.toString('utf8') : null;
-        }
-
+        const body = await extractBodyText(req);
         const host = extractHost(req);
         const started_at = req.timingEvents?.startTime 
             ? new Date(req.timingEvents.startTime).toISOString() 
@@ -116,13 +123,7 @@ async function startProxyServer(port = 8888, options = {}) {
 
     // 2. Intercept upstream response, update SQLite, and broadcast to connected UI clients
     await server.on('response', async (res) => {
-        let body = null;
-        try {
-            body = await res.body.getText();
-        } catch {
-            body = res.body?.buffer ? res.body.buffer.toString('utf8') : null;
-        }
-
+        const body = await extractBodyText(res);
         const completed_at = new Date().toISOString();
         const reqData = activeRequests.get(res.id) || {};
         activeRequests.delete(res.id);
